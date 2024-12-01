@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= project.name %></title>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+    <link rel="stylesheet" type="text/css" href="/project.css" />
+    <link rel="stylesheet" type="text/css" href="/contact.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="header">
+      <h1><%= project.name %></h1>
+      <h3>By <%= pageData.owner %></h3>
+    </div>
+    <div class="navigation">
+        <a href="/">Home</a>
+        <a href="/projects">Explore My Projects</a>
+        <a href="/contact">Contact Me</a>
+        <% if (userId && isAdmin) { %>
+          <a href="../messages">Messages</a> <!-- Only visible to admin users -->
+        <% } %>
+        <a href="/login">Login</a>
+    </div>
+    <div class="content">
+      <a href="<%= project.github %>"><i class="fab fa-github"></i> View on GitHub</a>
+      <h2>Languages Used:</h2>
+      <% if (Object.keys(languages).length > 0) { %>
+          <ul class="multi-column-list">
+              <% Object.entries(languages).forEach(([language, size]) => { %>
+                  <li><%= language %>: <%= size %> bytes</li>
+              <% }) %>
+          </ul>
+      <% } else { %>
+          <p>Languages data not available.</p>
+      <% } %>
+      <div class="project-description">
+        <%= project.description %>
+      </div>
+      <div class="images-container">
+        <% images.forEach(image => { %>
+          <div class="image-card">
+            <img src="<%= image %>" alt="<%= project.name %>" />
+          </div>
+        <% }) %>
+      </div>
+      <!-- Comment Section -->
+      <h2>Comments:</h2>
+
+      <% if (username) { %>
+        <!-- Comment form if logged in -->
+        <div class="comment-form">
+          <form action="./comment" method="POST">
+            <!-- Hidden input to send projectId -->
+            <input type="hidden" name="projectId" value="<%= project.id %>">
+            <textarea name="comment" placeholder="Leave a comment..."></textarea>
+            <button type="submit">Post Comment</button>
+          </form>
+        </div>
+
+        <div class="comments-list">
+          <% comments.forEach(comment => { %>
+            <div class="comment">
+              <p><strong><%= comment.username %>:</strong> <%= comment.comment %></p>
+              <small><%= comment.created_at %></small>
+            </div>
+          <% }) %>
+        </div>
+
+      <% } else { %>
+        <p class="login-prompt">You need to <a href="/login">login</a> to view or post comments.</p>
+      <% } %>
+
+      <button onclick="window.location.href = '/projects';">Back to Projects</button>
+    </div>
+  </body>
+</html>

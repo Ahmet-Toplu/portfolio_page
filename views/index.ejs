@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%=pageData.owner%></title>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="header">
+      <h1>Welcome to my portfolio page!</h1>
+      <h3><%=pageData.owner%></h3>
+    </div>
+    <div class="navigation">
+        <a href="/">Home</a>
+        <a href="/projects">Explore My Projects</a>
+        <a href="/contact">Contact Me</a>
+        <% if (userId && isAdmin) { %>
+          <a href="./messages">Messages</a> <!-- Only visible to admin users -->
+        <% } %>
+        <a href="/login">Login</a>
+    </div>
+    <div class="content">
+      <h1>Hi, I'm <%=pageData.owner%></h1>
+      <h3>A Computer Science student passionate about building websites and training AI models.</h3>
+
+      <h1>About Me</h1>
+      <p>
+        I am a Computer Science student at Goldsmiths, University of London,
+        specializing in web development and artificial intelligence. 
+        I have hands-on experience in creating scalable websites, 
+        training AI models, and developing mobile apps.
+      </p>
+
+      <h3>Key skills:</h3>
+      <ul class="multi-column-list">
+        <li><i class="fab fa-python"></i> Python</li>
+        <li><i class="fas fa-brain"></i> TensorFlow</li>
+        <li><i class="fab fa-js"></i> JavaScript</li>
+        <li><i class="fab fa-react"></i> React/React-Native</li>
+        <li><i class="fab fa-node"></i> Node.js</li>
+        <li><i class="fas fa-code"></i> HTML/CSS</li>
+        <li><i class="fas fa-database"></i> MySQL</li>
+        <li><i class="fas fa-bolt"></i> Capacitor</li>
+        <li><i class="fas fa-server"></i> Express.js</li>
+        <li><i class="fab fa-docker"></i> Docker</li>
+      </ul>
+
+      <p>In my free time I like to garden, if the weather permits, and play with my cats. Since coding is also a passion of mine I always have a couple of hobby projects I work on among other things. </p>
+    </div>
+  </body>
+</html>

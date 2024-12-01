@@ -1,0 +1,103 @@
+/* contact.css: Specific styles for the contact page */
+.content {
+    justify-content: center;
+    align-items: center;
+    text-align: center; /* Center-align text inside the content */
+}
+
+/* Ensure .form-container and other elements are not affected by .multi-column-list */
+.form-container {
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: calc(100% - 40px); /* Avoid horizontal overflow caused by padding */
+    max-width: 400px;
+    margin: auto; /* Center horizontally */
+    background-color: #ffffff;
+    text-align: left; /* Ensure text aligns properly */
+}
+
+/* Override padding/margin issues caused by .multi-column-list */
+.content .multi-column-list {
+    padding-left: 0 !important; /* Remove list padding inside the form context */
+    margin: 0 !important;
+    text-overflow: ellipsis; /* Prevent text overflow */
+    max-width: 100%; /* Ensure list does not overflow */
+    overflow: hidden; /* Hide overflow */
+}
+
+/* Form Heading */
+h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333333;
+}
+
+/* Form Group */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555555;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #333333;
+    background-color: #f9f9f9;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #0066cc;
+    background-color: #ffffff;
+    box-shadow: 0 0 5px rgba(0, 102, 204, 0.3);
+}
+
+/* Submit Button */
+.submit-btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #0066cc;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #005bb5;
+}
+
+.submit-btn:active {
+    background-color: #004a93;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .form-container {
+        padding: 15px 20px;
+    }
+    h3 {
+        font-size: 18px;
+    }
+    .form-group input,
+    .form-group textarea {
+        font-size: 14px;
+    }
+    .submit-btn {
+        font-size: 14px;
+    }
+}

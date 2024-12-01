@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+    <link rel="stylesheet" type="text/css" href="/messages.css" />
+  </head>
+  <body>
+    <div class="header">
+      <h1>Welcome to the Admin Page!</h1>
+    </div>
+    <div class="navigation">
+        <a href="/">Home</a>
+        <a href="/projects">Explore My Projects</a>
+        <a href="/contact">Contact Me</a>
+        <% if (userId && isAdmin) { %>
+          <a href="./messages">Messages</a> <!-- Only visible to admin users -->
+        <% } %>
+        <a href="/login">Login</a>
+    </div>
+    <div class="content">
+      <h2>Only Admins Can See This Page</h2>
+      <p>This is the secret content available only to admins.</p>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Message</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% messages.forEach(msg => { %>
+            <tr>
+              <td><%= msg.name %></td>
+              <td><%= msg.username %></td>
+              <td><%= msg.email %></td>
+              <td><%= msg.message %></td>
+              <td><%= msg.created_at %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

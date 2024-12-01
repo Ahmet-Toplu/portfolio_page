@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%=pageData.owner%></title>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+    <link rel="stylesheet" type="text/css" href="/contact.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="header">
+      <h1>Contact Me</h1>
+    </div>
+    <div class="navigation">
+        <a href="/">Home</a>
+        <a href="/projects">Explore My Projects</a>
+        <a href="/contact">Contact Me</a>
+        <% if (userId && isAdmin) { %>
+            <a href="./messages">Messages</a> <!-- Only visible to admin users -->
+        <% } %>
+        <a href="/login">Login</a>
+    </div>
+    <div class="content">
+        <h1>Contact Me</h1>
+        <p>
+            If you want to contact me, you can reach me on the following platforms:
+        </p>
+    
+        <ul class="multi-column-list">
+            <li><i class="fab fa-linkedin"></i> LinkedIn: <a href="https://www.linkedin.com/in/ahmet-toplu-b99673226/">Ahmet Toplu</a></li>
+            <li><i class="fab fa-github"></i> GitHub: <a href="https://github.com/Ahmet-Toplu">Ahmet Toplu</a></li>
+            <li><i class="fas fa-envelope"></i> Email: <a href="mailto:alexxhhofman@gmail.com">alexxhhofman@gmail.com</a></li>
+        </ul>
+
+        <br>
+        <br>
+
+        <% if (error) { %>
+            <div class="alert alert-error">
+                <p><%= error %></p>
+            </div>
+        <% } %>
+        
+        <% if (success) { %>
+            <div class="alert alert-success">
+                <p><%= success %></p>
+            </div>
+        <% } %>
+        
+        <% if (username) { %>
+            <div class="form-container">
+                <h3>Or you can fill out the form below:</h3>
+                <form action="/contact" method="POST">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message:</label>
+                        <textarea id="message" name="message" rows="5" required></textarea>
+                    </div>
+                    <input type="submit" value="Submit" class="submit-btn">
+                </form>
+            </div>
+        <% } else { %>
+            <p>
+                If you want to contact me through this website or collaborate with me, please <a href="../login">login first</a>.
+            </p>
+        <% } %>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%=pageData.owner%></title>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+    <link rel="stylesheet" type="text/css" href="/projects.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="header">
+      <h1>My Projects</h1>
+      <h3><%=pageData.owner%></h3>
+    </div>
+    <div class="navigation">
+        <a href="/">Home</a>
+        <a href="/projects">Explore My Projects</a>
+        <a href="/contact">Contact Me</a>
+        <% if (userId && isAdmin) { %>
+          <a href="./messages">Messages</a> <!-- Only visible to admin users -->
+        <% } %>
+        <a href="/login">Login</a>
+    </div>
+    <div class="content">
+      <div class="projects-container">
+        <% projects.forEach(project => { %>
+          <a href="/projects/<%= project.id %>" class="project-card">
+            <div>
+              <img src="<%= project.image %>" alt="<%= project.name %>" />
+              <h3><%= project.name %></h3>
+            </div>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  </body>
+</html>

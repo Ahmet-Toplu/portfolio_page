@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%=pageData.owner%></title>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+    <link rel="stylesheet" type="text/css" href="/login.css" />
+  </head>
+  <body>
+    <div class="header">
+      <h1>Welcome to my portfolio page!</h1>
+      <h3><%=pageData.owner%></h3>
+    </div>
+    <div class="navigation">
+        <a href="/">Home</a>
+        <a href="/projects">Explore My Projects</a>
+        <a href="/contact">Contact Me</a>
+        <% if (userId && isAdmin) { %>
+          <a href="./messages">Messages</a> <!-- Only visible to admin users -->
+        <% } %>
+        <a href="/login">Login</a>
+    </div>
+    <div class="content">
+        <!-- check if the user is logged in -->
+        <% if (username) { %>
+            <h1>Hi, <%= username %></h1>
+            <p>You are already logged in</p>
+            <a href="/login/logout">Logout</a>
+        <% } else { %>
+            <h1>Hi, I'm <%=pageData.owner%> and this my login page</h1>
+            <div class="login-container">
+                <h1>Login</h1>
+                <% if (typeof error !== "undefined") { %>
+                    <p class="error"><%= error %></p>
+                <% } %>
+                <form action="/login" method="POST">
+                    <input type="text" name="username" placeholder="Username" required />
+                    <input type="password" name="password" placeholder="Password" required />
+                    <button type="submit">Login</button>
+                    <button type="button" onclick="window.location.href='/login/register'">Register</button>
+                </form>
+            </div>
+        <% } %>
+    </div>
+  </body>
+</html>
