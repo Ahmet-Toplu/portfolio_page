@@ -22,6 +22,10 @@
         <a href="/login">Login</a>
     </div>
     <div class="content">
+      <form action="/projects/search" method="GET" class="search-form">
+        <input type="text" name="query" placeholder="Search projects..." required>
+        <button type="submit">Search</button>
+      </form>
       <div class="projects-container">
         <% projects.forEach(project => { %>
           <a href="/projects/<%= project.id %>" class="project-card">

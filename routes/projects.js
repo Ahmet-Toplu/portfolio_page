@@ -89,6 +89,48 @@ router.get('/', async (req, res) => {
         res.status(500).send('Error fetching projects');
     }
 });
+
+router.get('/search', async (req, res) => {
+    const searchQuery = req.query.query;
+
+    try {
+        // Query the database to find projects matching the search term
+        const [results] = await db.query(
+            "SELECT * FROM projects WHERE name LIKE ? OR description LIKE ?", 
+            [`%${searchQuery}%`, `%${searchQuery}%`]
+        );
+
+        // Process the projects (e.g., add images)
+        const updatedProjects = await Promise.all(results.map(async (project) => {
+            const projectFolderPath = path.join(__dirname, "../public", project.folder);
+            let selectedImage = "";
+
+            try {
+                const files = fs.readdirSync(projectFolderPath);
+                selectedImage = files.find(file => file.startsWith("0_")) || files[0];
+            } catch (error) {
+                console.error(`Error reading folder for project ${project.name}:`, error);
+            }
+
+            return {
+                ...project,
+                image: selectedImage ? `${project.folder}/${selectedImage}` : "/images/default.jpg",
+            };
+        }));
+
+        // Render the projects page with search results
+        res.render('projects.ejs', {
+            projects: updatedProjects,
+            username: req.session.username,
+            isAdmin: req.session.isAdmin,
+            userId: req.session.userId
+        });
+    } catch (error) {
+        console.error("Error during search:", error);
+        res.status(500).send('Error searching for projects');
+    }
+});
+
   
 // Route for viewing project details with comments
 router.get('/:id', async (req, res) => {
