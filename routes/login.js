@@ -49,7 +49,7 @@ router.post("/", async (req, res, next) => {
             req.session.username = rows[0].username;  // Store username in session
             req.session.userId = rows[0].id;  // Store userId in session
             req.session.isAdmin = rows[0].admin;  // Store admin status in session
-            res.redirect("/"); // Redirect after successful login
+            res.redirect("./"); // Redirect after successful login
           } else {
             res.render("login.ejs", { error: "Invalid username or password" });
           }
