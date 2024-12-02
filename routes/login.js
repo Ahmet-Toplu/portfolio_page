@@ -91,7 +91,12 @@ router.post("/register", async (req, res, next) => {
     const [result] = await db.query(sqlquery, record);
 
     if (result.length > 0) {
-      return res.render("register.ejs", { error: "Username or email already exists" });
+      return res.render("register.ejs", {
+        error: "Username or email already exists",
+        username: req.session.username, 
+        userId: req.session.userId, 
+        isAdmin: req.session.isAdmin
+      });
     }
     // Step 2: Hash the password
     const hash = await bcrypt.hash(password, saltRounds);
