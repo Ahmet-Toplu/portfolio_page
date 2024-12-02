@@ -207,7 +207,7 @@ router.post('/comment', isLoggedIn, async (req, res) => {
     try {
         // Insert the comment into the database
         await db.query('INSERT INTO comments (user_id, project_id, comment) VALUES (?, ?, ?)', [userId, projectId, comment]);
-        res.redirect(`/projects/${projectId}`); // Redirect to the project page after posting the comment
+        res.redirect(`./${projectId}`); // Redirect to the project page after posting the comment
     } catch (error) {
         console.error('Error posting comment:', error);
         res.status(500).send('Error posting comment');
