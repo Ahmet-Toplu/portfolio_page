@@ -35,102 +35,105 @@ router.get('/',function(req, res, next){
 
 // Login form submission route
 router.post("/", async (req, res, next) => {      
-    let sqlquery = "SELECT * FROM users WHERE username = ?";
-    let record = [req.sanitize(req.body.username)];
-  
-    try {
-      const [rows, fields] = await db.query(sqlquery, record);
-  
-      if (rows.length > 0) {
-        // Compare the password
-        bcrypt.compare(req.sanitize(req.body.password), rows[0].password, function (err, result) {
-          if (result) {
-            // Store the username in session instead of userId
-            req.session.username = rows[0].username;  // Store username in session
-            req.session.userId = rows[0].id;  // Store userId in session
-            req.session.isAdmin = rows[0].admin;  // Store admin status in session
-            res.redirect("./"); // Redirect after successful login
-          } else {
-            res.render("login.ejs", { 
-              error: "Invalid username or password",
-              username: req.session.username, 
-              userId: req.session.userId, 
-              isAdmin: req.session.isAdmin
-            });
-          }
-        });
-      } else {
-        res.render("login.ejs", {
-          error: "Invalid username or password",
-          username: req.session.username, 
-          userId: req.session.userId, 
-          isAdmin: req.session.isAdmin
-        });
-      }
-    } catch (error) {
-      console.error("Error during login:", error);
-      next(error);
+  let sqlquery = "SELECT * FROM users WHERE username = ?";
+  let record = [req.sanitize(req.body.username)];
+
+  try {
+    const [rows, fields] = await db.query(sqlquery, record);
+
+    if (rows.length > 0) {
+      // Compare the password
+      bcrypt.compare(req.sanitize(req.body.password), rows[0].password, function (err, result) {
+        if (result) {
+          // Store the username in session instead of userId
+          req.session.username = rows[0].username;  // Store username in session
+          req.session.userId = rows[0].id;  // Store userId in session
+          req.session.isAdmin = rows[0].admin;  // Store admin status in session
+          res.redirect("./"); // Redirect after successful login
+        } else {
+          res.render("login.ejs", { 
+            error: "Invalid username or password",
+            username: req.session.username, 
+            userId: req.session.userId, 
+            isAdmin: req.session.isAdmin
+          });
+        }
+      });
+    } else {
+      res.render("login.ejs", {
+        error: "Invalid username or password",
+        username: req.session.username, 
+        userId: req.session.userId, 
+        isAdmin: req.session.isAdmin
+      });
     }
-  });
+  } catch (error) {
+    console.error("Error during login:", error);
+    next(error);
+  }
+});
   
 
 router.get("/register", (req, res, next) => {
     res.render("register.ejs", {username: req.session.username, userId: req.session.userId, isAdmin: req.session.isAdmin});
 });
 
-router.post("/register", async (req, res, next) => {
-  try {
-    // Sanitize and extract the form data
-    let username = req.sanitize(req.body.username);
-    let email = req.sanitize(req.body.email);
-    let password = req.sanitize(req.body.password);
-
-    // Step 1: Check if username or email already exists
-    let sqlquery = "SELECT * FROM users WHERE username = ? OR email = ?";
-    let record = [username, email];
-    const [result] = await db.query(sqlquery, record);
-
-    if (result.length > 0) {
+router.post(
+  "/register",
+  [
+    // Validate password strength
+    check('password')
+      .isLength({ min: 8 }).withMessage("Password must be at least 8 characters long.")
+      .matches(/\d/).withMessage("Password must contain at least one number.")
+  ],
+  async (req, res, next) => {
+    // Validate input data
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
       return res.render("register.ejs", {
-        error: "Username or email already exists",
-        username: req.session.username, 
-        userId: req.session.userId, 
+        error: errors.array().map(err => err.msg).join(", "),
+        username: req.session.username,
+        userId: req.session.userId,
         isAdmin: req.session.isAdmin
       });
     }
-    // Step 2: Hash the password
-    const hash = await bcrypt.hash(password, saltRounds);
 
-    // Step 3: Insert the user into the database
-    let insertQuery = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
-    let insertRecord = [username, email, hash];
-    await db.query(insertQuery, insertRecord);
+    try {
+      const { username, email, password } = req.body;
 
-    // Step 4: Retrieve the user's details from the database
-    let fetchQuery = "SELECT * FROM users WHERE username = ?";
-    const [userResult] = await db.query(fetchQuery, [username]);
+      // Check if username or email already exists
+      const sqlquery = "SELECT * FROM users WHERE username = ? OR email = ?";
+      const [result] = await db.query(sqlquery, [username, email]);
 
-    if (userResult.length > 0) {
-      // Set session variables
-      const user = userResult[0];
-      req.session.username = user.username;
-      req.session.userId = user.id;
-      req.session.isAdmin = user.admin;
+      if (result.length > 0) {
+        return res.render("register.ejs", {
+          error: "Username or email already exists",
+          username: username,
+          email: email
+        });
+      }
+
+      // Hash the password
+      const hash = await bcrypt.hash(password, saltRounds);
+
+      // Insert the user into the database
+      const insertQuery = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
+      await db.query(insertQuery, [username, email, hash]);
+
+      return res.redirect("../");
+    } catch (error) {
+      console.error("Error during registration:", error);
+      return next(error);
     }
-
-    return res.redirect("../");
-  } catch (error) {
-    console.error("Error during registration:", error);
-    return next(error);
   }
-});
+);
 
 router.get('/logout', (req,res) => {
     req.session.destroy(err => {
     if (err) {
       return res.redirect('./')
     }
-    res.send('you are now logged out. <a href='+'./'+'>Back to login</a>');
+    res.send('you are now logged out. <a href='+'../login'+'>Back to login</a>');
     })
 })
 
