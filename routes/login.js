@@ -51,11 +51,21 @@ router.post("/", async (req, res, next) => {
             req.session.isAdmin = rows[0].admin;  // Store admin status in session
             res.redirect("./"); // Redirect after successful login
           } else {
-            res.render("login.ejs", { error: "Invalid username or password" });
+            res.render("login.ejs", { 
+              error: "Invalid username or password",
+              username: req.session.username, 
+              userId: req.session.userId, 
+              isAdmin: req.session.isAdmin
+            });
           }
         });
       } else {
-        res.render("login.ejs", { error: "Invalid username or password" });
+        res.render("login.ejs", {
+          error: "Invalid username or password",
+          username: req.session.username, 
+          userId: req.session.userId, 
+          isAdmin: req.session.isAdmin
+        });
       }
     } catch (error) {
       console.error("Error during login:", error);
