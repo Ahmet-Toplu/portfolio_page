@@ -1,3 +1,6 @@
+-- Create the portfolio database if not exists
+CREATE DATABASE IF NOT EXISTS portfolio;
+
 -- Select the database before creating tables
 USE portfolio;
 
