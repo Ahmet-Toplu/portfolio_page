@@ -7,8 +7,7 @@ ENV MYSQL_DATABASE=portfolio
 ENV MYSQL_USER=portfolio
 ENV MYSQL_PASSWORD=portfolio
 
-# Copy any custom SQL files to the Docker image
-# These SQL files can be used to initialize the database with tables or seed data
+# Copy the SQL files to the Docker image
 COPY ./init.sql /docker-entrypoint-initdb.d/
 
 # Expose the MySQL port
