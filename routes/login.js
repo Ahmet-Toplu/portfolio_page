@@ -5,12 +5,13 @@ const express = require("express");
 const router = express.Router();
 var expressSanitizer = require("express-sanitizer");
 const { check, validationResult } = require('express-validator');
+const pool = require("../db");
 
 const isLoggedIn = async (req, res, next) => {
   if (req.session.userId) {
     // Check if the logged-in user is an admin
     try {
-      const [rows, fields] = await db.query('SELECT admin FROM users WHERE id = ?', [req.session.userId]);
+      const [rows, fields] = await pool.query('SELECT admin FROM users WHERE id = ?', [req.session.userId]);
       if (rows.length > 0 && rows[0].admin) {
         req.session.isAdmin = true; // Set isAdmin to true if the user is an admin
       } else {
@@ -39,7 +40,7 @@ router.post("/", async (req, res, next) => {
   let record = [req.sanitize(req.body.username)];
 
   try {
-    const [rows, fields] = await db.query(sqlquery, record);
+    const [rows, fields] = await pool.query(sqlquery, record);
 
     if (rows.length > 0) {
       // Compare the password
@@ -103,7 +104,7 @@ router.post(
 
       // Check if username or email already exists
       const sqlquery = "SELECT * FROM users WHERE username = ? OR email = ?";
-      const [result] = await db.query(sqlquery, [username, email]);
+      const [result] = await pool.query(sqlquery, [username, email]);
 
       if (result.length > 0) {
         return res.render("register.ejs", {
@@ -118,7 +119,7 @@ router.post(
 
       // Insert the user into the database
       const insertQuery = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
-      await db.query(insertQuery, [username, email, hash]);
+      await pool.query(insertQuery, [username, email, hash]);
 
       return res.redirect("../");
     } catch (error) {

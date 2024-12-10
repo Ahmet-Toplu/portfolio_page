@@ -4,6 +4,7 @@ const router = express.Router()
 const path = require("path");
 const fs = require("fs");
 const axios = require("axios");
+const pool = require("../db");
 require('dotenv').config();
 
 const GITHUB_API_BASE = "https://api.github.com/repos";
@@ -14,7 +15,7 @@ const isLoggedIn = async (req, res, next) => {
     if (req.session.userId) {
       // Check if the logged-in user is an admin
       try {
-        const [rows, fields] = await db.query('SELECT admin FROM users WHERE id = ?', [req.session.userId]);
+        const [rows, fields] = await pool.query('SELECT admin FROM users WHERE id = ?', [req.session.userId]);
         if (rows.length > 0 && rows[0].admin) {
           req.session.isAdmin = true; // Set isAdmin to true if the user is an admin
         } else {
@@ -55,7 +56,7 @@ async function fetchProjectLanguages(githubUrl) {
 router.get('/', async (req, res) => {
     // Query database for all projects
     try {
-        const [projects] = await db.query("SELECT * FROM projects");
+        const [projects] = await pool.query("SELECT * FROM projects");
 
         // Process project data (e.g., images)
         const updatedProjects = await Promise.all(projects.map(async (project) => {
@@ -95,7 +96,7 @@ router.get('/search', async (req, res) => {
 
     try {
         // Query the database to find projects matching the search term
-        const [results] = await db.query(
+        const [results] = await pool.query(
             "SELECT * FROM projects WHERE name LIKE ? OR description LIKE ?", 
             [`%${searchQuery}%`, `%${searchQuery}%`]
         );
@@ -138,7 +139,7 @@ router.get('/:id', async (req, res) => {
 
     // Query the database for the project by ID
     try {
-        const [projects] = await db.query("SELECT * FROM projects WHERE id = ?", [projectId]);
+        const [projects] = await pool.query("SELECT * FROM projects WHERE id = ?", [projectId]);
         const project = projects[0];
 
         if (!project) {
@@ -160,7 +161,7 @@ router.get('/:id', async (req, res) => {
 
         // Fetch comments for this project from the database
         try {
-            const [rows, fields] = await db.query(
+            const [rows, fields] = await pool.query(
                 `SELECT comments.comment, comments.created_at, users.username 
                  FROM comments
                  JOIN users ON comments.user_id = users.id
@@ -206,7 +207,7 @@ router.post('/comment', isLoggedIn, async (req, res) => {
 
     try {
         // Insert the comment into the database
-        await db.query('INSERT INTO comments (user_id, project_id, comment) VALUES (?, ?, ?)', [userId, projectId, comment]);
+        await pool.query('INSERT INTO comments (user_id, project_id, comment) VALUES (?, ?, ?)', [userId, projectId, comment]);
         res.redirect(`./${projectId}`); // Redirect to the project page after posting the comment
     } catch (error) {
         console.error('Error posting comment:', error);

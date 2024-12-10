@@ -2,12 +2,13 @@
 const express = require("express")
 const router = express.Router()
 const { check, validationResult } = require('express-validator');
+const pool = require("../db");
 
 const isLoggedIn = async (req, res, next) => {
     if (req.session.userId) {
       // Check if the logged-in user is an admin
       try {
-        const [rows, fields] = await db.query('SELECT admin FROM users WHERE id = ?', [req.session.userId]);
+        const [rows, fields] = await pool.query('SELECT admin FROM users WHERE id = ?', [req.session.userId]);
         if (rows.length > 0 && rows[0].admin) {
           req.session.isAdmin = true; // Set isAdmin to true if the user is an admin
         } else {
@@ -69,7 +70,7 @@ router.post('/contact', async (req, res) => {
 
     try {
         // Insert message into the database
-        await db.query(
+        await pool.query(
             'INSERT INTO messages (user_id, name, message) VALUES (?, ?, ?)', 
             [userId, displayName, message]
         );
@@ -98,7 +99,7 @@ router.get('/messages', isLoggedIn, async function(req, res, next){
     }
 
     try {
-        const [messages] = await db.query(`
+        const [messages] = await pool.query(`
             SELECT m.id, m.name, m.message, m.created_at, u.username, u.email
             FROM messages m
             JOIN users u ON m.user_id = u.id
